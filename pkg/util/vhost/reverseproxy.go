@@ -292,6 +292,10 @@ func (p *ReverseProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		}
 	}
 
+	if _, ok := req.Header["X-Forwarded-Host"]; !ok && req.Host != "" {
+		outreq.Header.Set("X-Forwarded-Host", req.Host)
+	}
+
 	res, err := transport.RoundTrip(outreq)
 	if err != nil {
 		p.getErrorHandler()(rw, outreq, err)
